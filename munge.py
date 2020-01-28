@@ -5,7 +5,7 @@ import os
 
 # %%
 base_dir = 'C:/Users/anari/'
-base_dir = 'D:/'
+#base_dir = 'D:/'
 github_dir = 'github/adp-kap_1/data/'
 excel_file = '월별_매입자연령대별_아파트매매거래_동호수.xlsx'
 
@@ -50,14 +50,10 @@ quarter = list(itertools.chain.from_iterable([i, i, i] for i in list_tmp))
 t = zip(quarter, month)
 df.columns = pd.MultiIndex.from_tuples(t)
 #%%
-test = df.groupby(['광역', '매입자연령대']).sum()
+#df.groupby([,axis=1]).sum()
 #test.reset_index(level=2) 
 #test.reset_index(inplace=True)
-test.columns
 
-#%%
-test.columns
-#%%
-test
-
+# %%
+df.groupby(df.columns.get_level_values(0), axis=1).sum()
 # %%
