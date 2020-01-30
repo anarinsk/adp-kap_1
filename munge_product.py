@@ -22,8 +22,8 @@ plt.rcParams['xtick.labelsize'] = 12.
 plt.rcParams['ytick.labelsize'] = 12.
 plt.rcParams['axes.labelsize'] = 15.
 # %% This is to be changed according to coding env.
-#base_dir = 'C:/Users/anari/'
-base_dir = 'D:/'
+base_dir = 'C:/Users/anari/'
+#base_dir = 'D:/'
 github_dir = 'github/adp-kap_1/data/'
 excel_file = '월별_매입자연령대별_아파트매매거래_동호수.xlsx'
 excel_dir = os.path.join(base_dir, github_dir, excel_file)
@@ -96,40 +96,21 @@ tdf1 = gen_refdt('m', ['광역', '매입자연령대']).drop(columns = ['합계'
 #tdf1
 # %%
 
-tdf1 
+tdf1.columns.levels[1]
+#tdf1.columns.labels
 #%%
-def testf(x): 
-    x['test'] = 1
-    return x
+def testf(x):
+    levels = x.columns.levels
+    labels = x.columns.labels
+    x.columns = levels[1][labels[1]]    
+    return (x['20대이하'] + x['30대'])/x.sum(axis=1)
 
 tdf1.groupby(level=0, axis=1).apply(testf)
-
-
+#tdf1.groupby.apply(testf)
 #%%
 ## Second column indexing 
 tdf2.div(tdf2.sum(axis=1), axis=0).plot.bar(stacked=True, rot=0)
 plt.show()
 # %%
-
-
-#%%
-import matplotlib.pyplot as plt
-import matplotlib.font_manager as fm
-import matplotlib.style
-import matplotlib as mpl
-mpl.style.use('seaborn-pastel')
-
-plt.rcParams["font.family"] = 'NanumBarunGothic'
-plt.rcParams['axes.unicode_minus'] = False
-plt.rcParams['font.size'] = 10.
-plt.rcParams['xtick.labelsize'] = 12.
-plt.rcParams['ytick.labelsize'] = 12.
-plt.rcParams['axes.labelsize'] = 15.
-
-#%%
-tdf2.div(tdf2.sum(axis=1), axis=0).plot.bar(stacked=True, rot=0)
-plt.show()
-# %%
-
 
 # %%
