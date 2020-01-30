@@ -14,4 +14,3 @@ import webbrowser
 import folium
 from folium import plugins
 print(folium.__version__)
-# %%
