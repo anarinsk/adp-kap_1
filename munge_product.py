@@ -22,8 +22,8 @@ plt.rcParams['xtick.labelsize'] = 12.
 plt.rcParams['ytick.labelsize'] = 12.
 plt.rcParams['axes.labelsize'] = 15.
 # %% This is to be changed according to coding env.
-#base_dir = 'C:/Users/anari/'
-base_dir = 'D:/'
+base_dir = 'C:/Users/anari/'
+#base_dir = 'D:/'
 github_dir = 'github/adp-kap_1/data/'
 excel_file = '월별_매입자연령대별_아파트매매거래_동호수.xlsx'
 excel_dir = os.path.join(base_dir, github_dir, excel_file)
@@ -89,20 +89,18 @@ def gen_refdt(period='m', groups=['광역', '시군구1', '매입자연령대'],
     return dt.groupby(groups).sum().T     
 
 #%% Testing
-#gen_refdt('m', ['광역', '매입자연령대'])
+gen_refdt('m', ['광역', '매입자연령대'])
 
 #%%
 tdf1 = gen_refdt('m', ['광역', '매입자연령대']).drop(columns = ['합계'], level=1)
-#tdf1.columns = tdf1.columns.droplevel()
-#tdf1.columns = tdf1.columns.droplev
-#tdf1.columns = [col[1] for col in tdf1.columns]
-tdf1.index
 #%%
-def testf(x):
+def gen_columns(x):
     x.columns = [col[1] for col in x.columns]
-    x['청년 구매율'] = (x['20대이하'] + x['30대'])/x.sum(axis=1)        
+    x['합계'] = x.sum(axis=1)   
+    x['청년 구매율'] = (x['20대이하'] + x['30대'])/x.drop('합계', axis=1).sum(axis=1)
     return x.reset_index()
 
-tdf2 = tdf1.groupby(level=0, axis=1).apply(testf)
-tdf2.columns
-# %%
+tdf2 = tdf1.groupby(level=0, axis=1).apply(gen_columns)
+tdf2.to_pickle("광역.pkl")
+
+## End of code
