@@ -5,7 +5,8 @@ import os
 import itertools
 
 ## for generating dir 
-def gen_dir(terminal, where="work"):
+here = "home"
+def gen_dir(terminal, where=here):
     if where == "work": 
         base_dir = 'D:/'
     else:
@@ -25,7 +26,7 @@ def gen_dir(terminal, where="work"):
     
     github_dir = 'github/adp-kap_1/'
     return os.path.join(base_dir, github_dir, terminal)
-
+##### END of gen_dir 
 def process_raw(dir=excel_dir):
     """ function for loading excel data  
     
@@ -54,9 +55,7 @@ def process_raw(dir=excel_dir):
     df.fillna(0, inplace=True)
 
     return df 
-
-## for massaging data 
-#%%
+##### END of process_raw()
 def gen_refdt(period='m', groups=['광역', '시군구1', '매입자연령대'], dir=excel_dir):
     """ function for generating excel data  
     
@@ -81,29 +80,17 @@ def gen_refdt(period='m', groups=['광역', '시군구1', '매입자연령대'],
         dt = dt.groupby(dt.columns.get_level_values(1), axis=1).sum()
     
     return dt.groupby(groups).sum().T    
- 
+##### END of gen_refdt()
 def gen_columns(x, depth=2):    
-    x.columns = [col[depth] for col in x.columns]
+    #x = x.reset_index()
+    x.columns = [col[depth] for col in x.columns]    
     x['합계'] = x.sum(axis=1)  
     x['청년 구매율'] = (x['20대이하'] + x['30대'])/x.drop('합계', axis=1).sum(axis=1)
     return x.reset_index()
+##### END of gen_columns 
 # %%
 tdf1 = gen_refdt('m', ['광역', '시군구1', '매입자연령대']).drop(columns = ['합계'], level=2)
-tdf2 = tdf1.groupby(level=1, axis=1).apply(gen_columns)
-#tdf2.to_pickle(gen_dir('광역/광역.pkl', where='work'))
-tdf1
-
-# %%
-def gen_columns(x):    
-    #x = x.reset_index()
-    x.columns = [col[2] for col in x.columns]    
-    x['합계'] = x.sum(axis=1)  
-    x['청년 구매율'] = (x['20대이하'] + x['30대'])/x.drop('합계', axis=1).sum(axis=1)
-    return x.reset_index()
-
 tdf2 = tdf1.groupby(level=[0,1], axis=1).apply(gen_columns)
-tdf2.to_pickle(gen_dir('시군구/시군구1.pkl', where='work'))
-# %%
+tdf2.to_pickle(gen_dir('시군구/시군구1.pkl', where=here))
 
-
-# %%
+#### END OF CODE
