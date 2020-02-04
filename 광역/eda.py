@@ -23,14 +23,20 @@ plt.rcParams['axes.labelsize'] = 15.
 #print(plt.style.available)
 #plt.rcParams['axes.prop_cycle'].by_key()['color']
 # %% This is to be changed according to coding env.
-base_dir = 'C:/Users/anari/'
-#base_dir = 'D:/'
-github_dir = 'github/adp-kap_1/'
-pkl_file = '광역.pkl'
-pkl_dir = os.path.join(base_dir, github_dir, pkl_file)
-df = pd.read_pickle(pkl_dir)
-df
-# %% Munge for 청년 구매율, 거래건수 합 
+#base_dir = 'C:/Users/anari/'
+def gen_dir(terminal, where="work"):
+
+    if where == "work": 
+        base_dir = 'D:/'
+    else:
+        base_dir = 'C:/Users/anari/'
+    
+    github_dir = 'github/adp-kap_1/'
+    
+    return os.path.join(base_dir, github_dir, terminal)
+#%%
+#gen_dir('광역/광역.pkl', where='work')
+df = pd.read_pickle(gen_dir('광역/광역.pkl', where='work'))
 df1 = df.stack(level='광역').reset_index()
 #a = [x+1 for x in range(0,12)]
 #b = [str(x)+'월' for x in range(0,12)]
@@ -96,7 +102,7 @@ for metro, group_data in df2[df2['광역'] .isin(selected)].groupby('광역'):
 
 touch_fig(df2)
 #plt.show()
-plt.savefig('youthrate.png', dpi=300)
+plt.savefig(gen_dir('광역\youthrate.png', where='work'), dpi=300)
 #%%
 df_cor = df2.groupby(['광역'])[['청년 구매율', '합계']].corr(method='kendall')
 df_cor.reset_index(inplace=True)
@@ -107,13 +113,5 @@ dft.rename(columns={'합계': '상관계수'}, inplace=True)
 # %%
 ax = dft.sort_values(['상관계수']).plot.barh(x='광역', y='상관계수', rot=0)
 ax.legend([r'Kendall $\tau$'])
-plt.savefig('kendalltau.png', dpi=300)
-# %%
-
-# %%
-df = pd.DataFrame({'lab':['A', 'B', 'C'], 'val':[10, 30, 20]})
-ax = df.plot.bar(x='lab', y='val', rot=0)
-
-plt.savefig('kendalltau.png', dpi=300)
-
+plt.savefig(gen_dir('광역\kendalltau.png', where='work'), dpi=300)
 # %%
