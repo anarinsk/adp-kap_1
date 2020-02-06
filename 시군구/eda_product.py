@@ -9,15 +9,16 @@ import matplotlib.style
 import matplotlib as mpl
 import itertools
 import copy
+import random 
 
 # Assign plotting style 
 mpl.style.use('seaborn-pastel')
 plt.rcParams["font.family"] = 'NanumBarunGothic'
 plt.rcParams['axes.unicode_minus'] = False
 plt.rcParams['font.size'] = 10.
-plt.rcParams['xtick.labelsize'] = 9.
-plt.rcParams['ytick.labelsize'] = 9.
-plt.rcParams['axes.labelsize'] = 12.
+plt.rcParams['xtick.labelsize'] = 10.
+plt.rcParams['ytick.labelsize'] = 10.
+plt.rcParams['axes.labelsize'] = 13.
 
 # Global Parameters 
 
@@ -72,7 +73,7 @@ def draw_step(data, var_y, var_x="월", alpha=0.15):
 
 def color_assign(df, selected):
     color = plt.rcParams['axes.prop_cycle'].by_key()['color']
-    df['color'] = 'gray'
+    df = df.assign(color='gray')
     for q in range(len(selected)):
         df.loc[df['시군구1'] == selected[q],'color'] = color[q]
     return df
@@ -84,40 +85,60 @@ def touch_fig(df):
     ax.set_xticklabels(xlabels)
     plt.ylabel('청년 구매율')
     
-    dft=df[df.index == 11][['시군구1','청년 구매율']]
+    dft=df.loc[df['월']==11][['시군구1','청년 구매율']]
     ax2 = ax.twinx()
     ax2.set_ylim(ax.get_ylim())
     ax2.set_yticks(dft['청년 구매율'])
     ax2.set_yticklabels(dft['시군구1'], alpha=0.2)
 
-    dft=df[df.index == 11][['시군구1','청년 구매율']]
-    dft=dft[dft['시군구1'] .isin(selected)]
+    dft=df.loc[df['월']==11][['시군구1','청년 구매율']]
+    dft=dft[dft['시군구1'].isin(selected)]
     ax2 = ax.twinx()
     ax2.set_ylim(ax.get_ylim())
     ax2.set_yticks(dft['청년 구매율'])
     ax2.set_yticklabels(dft['시군구1'], alpha=1)
 #%% Funtions testing 
-
-#%%
+selected = ['은평구', '마포구']
 df2 = gen_filtered_df(['서울'], df1)
 df2 = color_assign(df2, selected)
+
+random.sample(list(df2['시군구1'].unique()),2)
 #%%
-fig, ax = plt.subplots(figsize=(10, 6))
-selected = ['강남구', '은평구']
-#%%
+def draw_gwangyuk(df, 
+                  two_cites=, 
+                  figsize=(9,6)):
 
-for metro, group_data in df2.groupby('시군구1'):
-    group_data = group_data.reset_index()
-    draw_step(group_data, '청년 구매율')
+    fig, ax = plt.subplots(figsize=figsize)
 
-for metro, group_data in df2[df2['시군구1'] .isin(selected)].groupby('시군구1'):
-    group_data = group_data.reset_index()
-    draw_step(group_data, '청년 구매율', alpha=1)
+    for metro, group_data in df.groupby('시군구1'):
+        group_data = group_data.reset_index()
+        draw_step(group_data, '청년 구매율')
 
-touch_fig(df2)
-plt.show()
+    for metro, group_data in df[df['시군구1'].isin(selected)].groupby('시군구1'):
+        group_data = group_data.reset_index()
+        draw_step(group_data, '청년 구매율', alpha=1)
+
+    plt.xticks(np.arange(0,12, step=1))
+    xlabels = [str(x+1)+'월' for x in range(0,12)]
+    ax.set_xticklabels(xlabels)
+    plt.ylabel('청년 구매율')
+    
+    dft=df.loc[df['월']==11][['시군구1','청년 구매율']]
+    ax2 = ax.twinx()
+    ax2.set_ylim(ax.get_ylim())
+    ax2.set_yticks(dft['청년 구매율'])
+    ax2.set_yticklabels(dft['시군구1'], alpha=0.2)
+
+    dft=df.loc[df['월']==11][['시군구1','청년 구매율']]
+    dft=dft[dft['시군구1'].isin(selected)]
+    ax2 = ax.twinx()
+    ax2.set_ylim(ax.get_ylim())
+    ax2.set_yticks(dft['청년 구매율'])
+    ax2.set_yticklabels(dft['시군구1'], alpha=1)
+
+    return plt.show()
 #plt.savefig(gen_dir('광역\youthrate.png', where='work'), dpi=300)
-# %%
-
+# %
+draw_gwangyuk(df2)
 
 # %%
