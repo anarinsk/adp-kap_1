@@ -105,10 +105,17 @@ df2 = color_assign(df2, selected)
 random.sample(list(df2['시군구1'].unique()),2)
 #%%
 def draw_gwangyuk(df, 
-                  two_cites=, 
+                  two_cities="no", 
                   figsize=(9,6)):
 
     fig, ax = plt.subplots(figsize=figsize)
+
+    if two_cities=="no":
+        selected = random.sample(list(df2['시군구1'].unique()),2)
+    else: 
+        selected = two_cities
+
+    df = color_assign(df, selected)
 
     for metro, group_data in df.groupby('시군구1'):
         group_data = group_data.reset_index()
@@ -138,7 +145,25 @@ def draw_gwangyuk(df,
 
     return plt.show()
 #plt.savefig(gen_dir('광역\youthrate.png', where='work'), dpi=300)
-# %
-draw_gwangyuk(df2)
+# %%
+def draw_corr(df, my_gwangyuk=["서울"]): 
+    # %% Custom filters 
+    my_filter1 = (df['청년 구매율'].notna())  
+    my_filter2 = my_filter1 & (df1['광역'].isin(my_gwangyuk)) 
+    df = df.loc[my_filter2]
+    # corr
+    df_cor = df.groupby(['시군구1'])[['청년 구매율', '합계']].corr(method='kendall')
+    df_cor.reset_index(inplace=True)
+    df_cor = df_cor.loc[(df_cor['합계'].notna())]
+    df_cor = df_cor[df_cor['level_1'] == "청년 구매율"][['시군구1', '합계']]
+    df_cor.columns = ['시군구', '상관계수']
+    df_cor.sort_values(['상관계수'], ascending=False)
+    df2 = df_cor.sort_values(['상관계수'])
 
+    fig, ax = plt.subplots(figsize=(9, 7))
+    ax.barh(df2['시군구'], df2['상관계수'], align='center')
+    ax.legend([r'Kendall $\tau$'])
+
+# %%
+draw_corr(df1, ["광주"])
 # %%
