@@ -22,15 +22,19 @@ plt.rcParams['axes.labelsize'] = 13.
 
 # Global Parameters 
 
-here = "work"
+here = "home"
 # %% Misc. funcs
 def gen_dir(terminal, where=here):
     if where == "work": 
         base_dir = 'D:/'
+        github_dir = 'github/adp-kap_1/'
+    if where == "github":
+        base_dir = "https://github.com/anarinsk/adp-kap_1/"
+        github_dir = ''
     else:
         base_dir = 'C:/Users/anari/'
+        github_dir = 'github/adp-kap_1/'
     
-    github_dir = 'github/adp-kap_1/'
     return os.path.join(base_dir, github_dir, terminal)
 ## %% Load, Pivot, Massage
 def loading_pkl_df(depth):
@@ -43,10 +47,11 @@ def loading_pkl_df(depth):
     df1.drop(columns = ['index'], inplace=True)
     df1.rename(columns={'level_0': '월'}, inplace=True)
     return df1 
+
+here = 'github'
 # %%
 df_lv1 = loading_pkl_df('광역')
 df_lv2 = loading_pkl_df('시군구1')
-
 # %% Post-processing
 def pick_depth(df): 
     if "시군구1" in df.columns: 
